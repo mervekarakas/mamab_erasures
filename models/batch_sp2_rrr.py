@@ -1,5 +1,6 @@
 """
-BatchSP2RRR — Random round-robin scheduling baseline.
+BatchSP2RRR — Random round-robin scheduling baseline. Each round randomly
+selects from arms still needing pulls; on erasure replays last arm.
 """
 
 import math
@@ -12,15 +13,10 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchSP2RRR(BanditBase):
-    """
-    Demonstration of a chunk-based scheduling approach for multi-agent bandits under erasures.
+    """Random round-robin scheduling baseline for multi-agent bandits.
 
-    Online Phase: (Random round-robin scheduling)
-      - Each round, we look at the arms that are pulled less then needed.
-      - We propose a random arm among those arms for the next agent.
-      - If it is erased, the agent replays its last-received arm.
-      - Exactly one pull is credited to whichever arm was actually played.
-      - Once an arm hits the needed 4^i successful pulls, it is removed from the available arms.
+    Each round, randomly picks from arms that still need pulls and assigns to
+    agents. On erasure, replays the agent's last-received arm.
     """
 
     def __init__(self, k, m, iters, alphas, var=1, c=1, mu='random', epsilon=0, base=None, erasure_seq=None,
@@ -37,7 +33,7 @@ class BatchSP2RRR(BanditBase):
         """
         # Initializations
         super().__init__(
-            name="MA-LSAE-RRR",
+            name="Round-Robin",
             k=k,
             m=m,
             iters=iters,

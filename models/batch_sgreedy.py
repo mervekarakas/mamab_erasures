@@ -1,5 +1,6 @@
 """
-BatchSGreedy — Greedy per-round arm selection baseline.
+BatchSGreedy — Greedy per-round scheduling baseline. Each round assigns the
+m arms with fewest pulls to agents; replicates if fewer than m arms remain.
 """
 
 import math
@@ -12,29 +13,17 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchSGreedy(BanditBase):
-    """
-    A 'greedy' batch-based scheduling approach for multi-agent bandits under erasures.
+    """Greedy per-round arm selection baseline.
 
-    In each batch i:
-      - We require each active arm to be pulled M_i = 4^i times (for demonstration),
-        or until partial elimination occurs.
-      - In each round of the batch:
-          1) Identify all arms that haven't reached M_i pulls in this batch.
-          2) If # such arms > m, pick the m arms with the fewest pulls so far (tie-break random).
-             If # such arms < m, we replicate these arms to fill the agents (some arms assigned to multiple agents).
-          3) Assign one chosen arm (or replicate) to each agent (random assignment).
-          4) Each agent attempts to 'receive' its assigned arm:
-             - If erased, the agent replays its last successfully received arm.
-             - We credit exactly one pull to whichever arm is actually played.
-          5) Once an arm meets M_i pulls, remove it from the set of "unfinished arms."
-      - After the batch completes, update global empirical means and do an elimination step.
+    Each round, assigns the m arms with the fewest accumulated pulls to the m
+    agents. If fewer than m arms remain, replicates across agents.
     """
 
     def __init__(self, k, m, iters, alphas, var=1, c=1,
                  mu='random', epsilon=0, base=None, erasure_seq=None,
                  feedback_mode=FEEDBACK_BEACON, rng: Optional[Generator] = None, verbose: bool = False):
         super().__init__(
-            name='BatchSGreedy',
+            name='Greedy',
             k=k,
             m=m,
             iters=iters,

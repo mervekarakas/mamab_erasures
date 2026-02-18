@@ -1,5 +1,6 @@
 """
-BatchTPGNew — TPG variant that protects already-delivered arms from takeover.
+BatchTPGNew — TPG variant that guards already-delivered arms from takeover,
+reducing redundant retransmissions under low erasure.
 """
 
 import math
@@ -13,10 +14,10 @@ from models.base import C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchTPGNew(BatchTPG):
-    """
-    Variant of TPG that avoids reassigning agents that already have a delivered arm
-    unless that arm/chunk is finished or eliminated. This should reduce needless
-    retransmissions under low erasure.
+    """TPG variant that guards already-delivered arms from reassignment.
+
+    Agents that have successfully received their assigned arm are not candidates
+    for takeover, reducing wasted retransmissions when erasure rates are low.
     """
 
     def __init__(self, *args, **kwargs):
@@ -24,7 +25,7 @@ class BatchTPGNew(BatchTPG):
         kwargs = dict(kwargs)
         kwargs.pop("name", None)
         super().__init__(*args, **kwargs)
-        self.name = "TPG-New"
+        self.name = "TPG-Guarded"
 
     def run(self):
         t = 0

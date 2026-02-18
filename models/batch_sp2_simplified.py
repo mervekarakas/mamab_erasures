@@ -1,5 +1,7 @@
 """
-BatchSP2Simplified — Pointer-based simplified TPG implementation.
+BatchSP2Simplified — Simplified TPG using pointer-based scheduling. Uses a
+single pointer to cycle agents through arms, with chunk-based finishing when
+few arms remain.
 """
 
 import math
@@ -13,14 +15,12 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchSP2Simplified(BanditBase):
-    '''
-    A single-function pointer-based scheduling approach, with accurate reward tracking:
-      (1) We track per-arm counts AND reward sums in each batch ("pull_count" & "pull_sums").
-      (2) Each time we increment pull_count[a], we also add the realized reward to pull_sums[a].
-      (3) At the end of a batch, we fold pull_sums[a] and pull_count[a] into the global (arm_sums[a], arm_counts[a])
-          to update the empirical mean self.k_reward_q[a].
-      (4) The scheduling logic is otherwise the same: reversing agent order, using a pointer to recycle arms, etc.
-    '''
+    """Simplified TPG using pointer-based scheduling.
+
+    Tracks per-arm pull counts and reward sums locally within each batch, then
+    folds into global statistics for elimination. Uses a worst-channel pointer
+    to recycle agents through arms.
+    """
 
     def __init__(self, k, m, iters, alphas, var=1, c=1, mu='random', epsilon=0, base=None, erasure_seq=None,
                  feedback_mode=FEEDBACK_BEACON, rng: Optional[Generator] = None, verbose: bool = False):

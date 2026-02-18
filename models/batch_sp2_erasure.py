@@ -14,18 +14,11 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchSP2Erasure(BanditBase):
-    """
-    Demonstration of a chunk-based scheduling approach for multi-agent bandits under erasures.
+    """SP2 with erasure feedback and stack-based delivery (SP2-Feedback).
 
-    Offline Phase:
-      - We assign each (agent, arm) a certain number of pulls -> stored in stacks.
-
-    Online Phase:
-      - Each round, we look at the top chunk in the agent's stack (if any).
-      - We propose that arm.
-      - If it is erased, the agent replays its last-received arm.
-      - Exactly one pull is credited to whichever arm was actually played.
-      - Once an arm hits the needed 4^i successful pulls, it is removed from all stacks.
+    Offline: assigns (agent, arm) pull counts to stacks.
+    Online: proposes top-of-stack arm each round; on erasure, replays last
+    successful arm. Feedback lets the controller track delivery and prune stacks.
     """
 
     def __init__(self, k, m, iters, alphas, var=1, c=1, mu='random', epsilon=0, base=None, erasure_seq=None,

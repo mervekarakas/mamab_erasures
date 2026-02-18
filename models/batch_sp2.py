@@ -16,18 +16,11 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_NONE
 
 
 class BatchSP2(BanditBase):
-    """
-    BatchSP2 method provided in our paper.
+    """Offline scheduled batch elimination (SP2) — no erasure feedback.
 
-    Args:
-        k: number of arms.
-        m: number of agents.
-        iters: time horizon.
-        mu: arm means ('random' or list/array).
-        alphas: repetition counts per agent.
-        epsilon: erasure probabilities per agent.
-        rng: optional numpy random Generator for reproducibility.
-        verbose: if True, emit debug logging during execution.
+    Pre-computes a pull schedule accounting for per-channel erasure probabilities
+    and repetition factors. Arms are eliminated based on confidence intervals
+    after each batch of pulls.
     """
     def __init__(
         self,

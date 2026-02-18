@@ -13,14 +13,11 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchTPG(BanditBase):
-    """
-    A batched multi-agent MAB algorithm with erasure feedback.
-    We implement your two suggestions:
-      1) We do not forcibly unassign from the slow agent, but mark `taken_over[m_slow] = True`.
-      2) The new (idle) agent does NOT inherit partial progress (delivery_done, attempts_spent, etc.).
-         It restarts from scratch on that arm.
+    """Two-Phase Greedy (TPG) for multi-agent bandits over erasure channels.
 
-    Both phases adopt leftover-based logic, but now we skip over any agent flagged as `taken_over`.
+    Phase 1: greedy assignment with dynamic takeover — idle agents claim arms from
+    slow agents (marked taken_over, not forcibly unassigned). No partial-state copy.
+    Phase 2: chunk-based finishing when <=M arms remain.
     """
 
     def __init__(self, k, m, iters, alphas, var=1, c=1, mu='random',

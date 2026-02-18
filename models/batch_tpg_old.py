@@ -1,6 +1,6 @@
 """
-BatchTPGOld — Earlier TPG variant with forcible agent unassignment.
-Superseded by BatchTPG.
+BatchTPGOld — TPG variant using forcible agent unassignment during takeover.
+Superseded by BatchTPG which marks agents taken-over without unassigning.
 """
 
 import math
@@ -13,22 +13,10 @@ from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
 
 
 class BatchTPGOld(BanditBase):
-    """
-    A batched multi-agent MAB algorithm with erasure feedback,
-    using a Two-Phase Greedy (TPG) approach + chunk-based finishing.
+    """TPG variant with forcible agent unassignment (superseded by BatchTPG).
 
-    Main Changes from the pointer-based approach:
-      (1) 'Phase 1': Greedy assignment with "takeover":
-          - Agents repeatedly pick up arms that need M_i=4^i successes.
-          - If an agent finishes early or is idle, it can 'take over'
-            from a slow agent to reduce overall finishing time.
-
-      (2) 'Phase 2': If <= M arms remain unfinished, chunk them so
-          multiple agents can share them more effectively.
-
-    We keep local pull_count[a] & pull_sums[a] for each batch, then fold
-    them into self.arm_counts[a], self.arm_sums[a] at batch-end. Then partial-eliminate
-    suboptimal arms from self.active_arms using confidence intervals.
+    Same two-phase structure as BatchTPG, but during takeover the slow agent is
+    forcibly unassigned (set to -1) rather than marked taken_over.
     """
 
     def __init__(self, k, m, iters, alphas, var=1, c=1, mu='random', epsilon=0,
@@ -36,7 +24,7 @@ class BatchTPGOld(BanditBase):
                  feedback_mode=FEEDBACK_BEACON, rng: Optional[Generator] = None, verbose: bool = False):
         # Basic settings routed through BanditBase
         super().__init__(
-            name='TPG-Old',
+            name='TPG-Forcible',
             k=k,
             m=m,
             iters=iters,

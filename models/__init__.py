@@ -5,11 +5,11 @@ JSAIT 2026 algorithms:
   BatchSP2            Offline scheduled batch pulls, no feedback (AISTATS 2024 baseline)
   BatchSP2Erasure     SP2 with erasure feedback and stack-based delivery ("SP2-Feedback")
   BatchTPG            Two-Phase Greedy — main JSAIT 2026 algorithm
-  BatchTPGNew         TPG variant that protects already-delivered arms
-  BatchTPGOld         Earlier TPG variant with forcible agent unassignment
+  BatchTPGNew         TPG variant that guards delivered arms from takeover
+  BatchTPGOld         TPG variant with forcible unassignment (superseded)
   BatchSP2RRR         Random round-robin scheduling baseline
   BatchSGreedy        Greedy per-round arm selection baseline
-  BatchSP2Simplified  Pointer-based simplified TPG implementation
+  BatchSP2Simplified  Simplified TPG with pointer-based scheduling
 
 Legacy AISTATS algorithms:
   ucb_ma              Multi-Agent UCB
