@@ -44,6 +44,8 @@ from models.lsae_horizontal import LSAE_ma_hor
 from models.lsae_vertical import LSAE_ma_ver
 from models.vanilla_sae import Vanilla_SAE_ma
 
+from models.factory import init_bandit
+
 __all__ = [
     # Base
     "CommMixin",
@@ -69,4 +71,6 @@ __all__ = [
     "LSAE_ma_hor",
     "LSAE_ma_ver",
     "Vanilla_SAE_ma",
+    # Factory
+    "init_bandit",
 ]
