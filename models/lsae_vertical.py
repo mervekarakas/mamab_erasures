@@ -9,7 +9,6 @@ until the assigned arm pulls are complete.
 Refactored onto BanditBase for consistent RNG seeding and reset API.
 """
 
-import random
 from typing import Optional, Sequence, Union
 
 import numpy as np

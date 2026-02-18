@@ -11,7 +11,6 @@ Provides:
 """
 
 import math
-import random
 from collections import deque
 import logging
 from typing import Optional, Sequence, Union, Tuple

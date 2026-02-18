@@ -5,7 +5,6 @@ few arms remain.
 """
 
 import math
-import random
 from typing import Optional, Sequence, Union
 
 import numpy as np
@@ -207,7 +206,7 @@ class BatchSP2Simplified(BanditBase):
                 if last_assigned_agent < self.m - 1:
                     for j in range(last_assigned_agent+1, self.m):
                         # pick random from the currently unfinished arms
-                        random_arm = random.choice(unfinished_arms_lst)
+                        random_arm = self.rng.choice(unfinished_arms_lst)
                         assigned_arm[j] = (random_arm, -1)
                 # Place the pointer 'pt' at the last agent who actually got a meaningful assignment
                 pt = last_assigned_agent
