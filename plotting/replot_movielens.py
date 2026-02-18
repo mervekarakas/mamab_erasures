@@ -6,53 +6,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
+
+from plotting.utils import (FONT_SIZE, TICK_SIZE, LEGEND_SIZE, DPI, LINEWIDTH,
+                             STD_ALPHA, COLORS, LINESTYLES, ALG_ORDER,
+                             DEFAULT_ALGS, style_ax, get_mean_std)
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'results')
-
-algs = [
-    ('SAE', True, 'Scheduled'),
-    ('SAE', True, 'Feedback', 'ack_success'),
-    ('SAE', True, 'TPG', 'ack_success'),
-]
-
-# ── Font sizes ──
-FONT_SIZE = 24
-TICK_SIZE = 22
-LEGEND_SIZE = 20
-
-# ── Shared style ──
-dpi = 300
-linewidth = 3.5
+algs = DEFAULT_ALGS
 x_upper = 5e4
-clrs = ["#0072B2", "#e63946", "#2ca02c"]
-lstyles = ["solid", ":", "--"]
-alg_order = ["SP2", "SP2-Feedback", "TPG"]
-STD_ALPHA = 0.15
-
-
-class CleanFormatter(ScalarFormatter):
-    def _set_format(self):
-        self.format = '%g'
-
-
-def style_ax(ax):
-    for axis in [ax.xaxis, ax.yaxis]:
-        fmt = CleanFormatter()
-        fmt.set_scientific(True)
-        fmt.set_powerlimits((0, 1))
-        axis.set_major_formatter(fmt)
-    ax.tick_params(labelsize=TICK_SIZE)
-    ax.xaxis.offsetText.set_fontsize(TICK_SIZE)
-    ax.yaxis.offsetText.set_fontsize(TICK_SIZE)
-
-
-def get_mean_std(data):
-    episodes = data['episode_regrets']
-    cum_regs = np.array([np.cumsum(np.sum(ep, axis=1)) for ep in episodes])
-    mean = cum_regs.mean(axis=0)
-    std = cum_regs.std(axis=0)
-    return mean, std
 
 
 # Load MovieLens results
@@ -63,7 +24,7 @@ full_results = saved['full_results']
 Ms = [4, 20, 40]
 subplot_names = ['(a)', '(b)', '(c)']
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 5.5), dpi=dpi)
+fig, axes = plt.subplots(1, 3, figsize=(18, 5.5), dpi=DPI)
 
 for subplot_idx, M in enumerate(Ms):
     ax = axes[subplot_idx]
@@ -74,15 +35,15 @@ for subplot_idx, M in enumerate(Ms):
         data = vars_plot[alg]
         name_to_data[data['name']] = data
 
-    for i, alg_name in enumerate(alg_order):
+    for i, alg_name in enumerate(ALG_ORDER):
         data = name_to_data[alg_name]
         mean, std = get_mean_std(data)
         t_axis = np.arange(1, mean.shape[0] + 1)
 
-        ax.plot(t_axis, mean, linewidth=linewidth,
-                color=clrs[i], linestyle=lstyles[i], label=alg_name)
+        ax.plot(t_axis, mean, linewidth=LINEWIDTH,
+                color=COLORS[i], linestyle=LINESTYLES[i], label=alg_name)
         ax.fill_between(t_axis, mean - std, mean + std,
-                        color=clrs[i], alpha=STD_ALPHA)
+                        color=COLORS[i], alpha=STD_ALPHA)
 
     if subplot_idx == 0:
         ax.set_ylabel("Regret ($R_t$)", fontsize=FONT_SIZE)
@@ -107,6 +68,6 @@ for subplot_idx, M in enumerate(Ms):
 
 fig.tight_layout()
 fig_path = os.path.join(RESULTS_DIR, 'k10_movielens_jsait.png')
-fig.savefig(fig_path, dpi=dpi, bbox_inches='tight')
+fig.savefig(fig_path, dpi=DPI, bbox_inches='tight')
 print(f"Saved: {fig_path}")
 print("Done")

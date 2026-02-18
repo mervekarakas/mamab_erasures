@@ -6,38 +6,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
+
+from plotting.utils import (FONT_SIZE, LEGEND_SIZE, DPI, LINEWIDTH,
+                             STD_ALPHA, COLORS, LINESTYLES, ALG_ORDER,
+                             style_ax)
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'results')
-
-# ── Font sizes ──
-FONT_SIZE = 24
-TICK_SIZE = 22
-LEGEND_SIZE = 20
-
-# ── Shared style ──
-dpi = 300
-linewidth = 3.5
-clrs = ["#0072B2", "#e63946", "#2ca02c"]
-lstyles = ["solid", ":", "--"]
-alg_order = ["SP2", "SP2-Feedback", "TPG"]
-STD_ALPHA = 0.15
-
-
-class CleanFormatter(ScalarFormatter):
-    def _set_format(self):
-        self.format = '%g'
-
-
-def style_ax(ax):
-    for axis in [ax.xaxis, ax.yaxis]:
-        fmt = CleanFormatter()
-        fmt.set_scientific(True)
-        fmt.set_powerlimits((0, 1))
-        axis.set_major_formatter(fmt)
-    ax.tick_params(labelsize=TICK_SIZE)
-    ax.xaxis.offsetText.set_fontsize(TICK_SIZE)
-    ax.yaxis.offsetText.set_fontsize(TICK_SIZE)
 
 
 def load_k100(eps_tag, M):
@@ -55,16 +29,16 @@ def plot_single(eps_tag, M, ax, show_ylabel=True, show_xlabel_label=True,
     for alg_key, data in results.items():
         name_to_data[data['name']] = data
 
-    for i, alg_name in enumerate(alg_order):
+    for i, alg_name in enumerate(ALG_ORDER):
         data = name_to_data[alg_name]
         mean = data['mean_cumreg']
         std = data['std_cumreg']
         t_axis = np.arange(1, len(mean) + 1)
 
-        ax.plot(t_axis, mean, linewidth=linewidth,
-                color=clrs[i], linestyle=lstyles[i], label=alg_name)
+        ax.plot(t_axis, mean, linewidth=LINEWIDTH,
+                color=COLORS[i], linestyle=LINESTYLES[i], label=alg_name)
         ax.fill_between(t_axis, mean - std, mean + std,
-                        color=clrs[i], alpha=STD_ALPHA)
+                        color=COLORS[i], alpha=STD_ALPHA)
 
     if show_ylabel:
         ax.set_ylabel("Regret ($R_t$)", fontsize=FONT_SIZE)
@@ -103,7 +77,7 @@ for eps_tag, M in [('nominal', 4), ('nominal', 20), ('nominal', 40), ('hard', 40
 nominal_Ms = [M for tag, M in available if tag == 'nominal']
 if nominal_Ms:
     n = len(nominal_Ms)
-    fig, axes = plt.subplots(1, n, figsize=(6*n, 5.5), dpi=dpi, squeeze=False)
+    fig, axes = plt.subplots(1, n, figsize=(6*n, 5.5), dpi=DPI, squeeze=False)
     axes = axes[0]
     subplot_names = [f'({chr(97+i)})' for i in range(n)]
 
@@ -123,18 +97,18 @@ if nominal_Ms:
     fig.tight_layout()
     # Save with filename matching supplement figure reference
     fig_path = os.path.join(RESULTS_DIR, 'k100_m4-20-40_nominal_jsait.png')
-    fig.savefig(fig_path, dpi=dpi, bbox_inches='tight')
+    fig.savefig(fig_path, dpi=DPI, bbox_inches='tight')
     print(f"Saved: {fig_path}")
 
 # ═══════════════════════════════════════════
 # Plot hard if available
 # ═══════════════════════════════════════════
 if ('hard', 40) in available:
-    fig, ax = plt.subplots(figsize=(6, 5), dpi=dpi)
+    fig, ax = plt.subplots(figsize=(6, 5), dpi=DPI)
     plot_single('hard', 40, ax, show_legend=True, x_upper=5e5, y_upper=160000)
     fig.tight_layout()
     fig_path = os.path.join(RESULTS_DIR, 'k100_m40_hard_jsait.png')
-    fig.savefig(fig_path, dpi=dpi, bbox_inches='tight')
+    fig.savefig(fig_path, dpi=DPI, bbox_inches='tight')
     print(f"Saved: {fig_path}")
 
 print("Done")
