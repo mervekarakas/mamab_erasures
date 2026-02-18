@@ -52,25 +52,6 @@ class BatchSP2RRR(BanditBase):
 
 
 
-    def _get_erasure_bit(self, m_idx: int) -> int:
-        """
-        Return the next erasure bit from the predetermined sequence if available;
-        otherwise, sample from epsilon.
-        """
-        if self.erasure_seq is not None:
-            bit = self.erasure_seq[self.erasure_index[m_idx], m_idx]
-            self.erasure_index[m_idx] += 1
-        else:
-            bit = int(self.rng.random() < self.eps[m_idx])
-
-        self.tx_count_total += 1
-        self.tx_count_per_agent[m_idx] += 1
-
-        self.update_feedback_counts(m_idx, bit)
-
-        return bit
-
-
     def run(self):
         """
         Run the chunk-based approach for 'iters' steps or until all arms have

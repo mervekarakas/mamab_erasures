@@ -56,14 +56,6 @@ class BatchSP2(BanditBase):
         )
         self.k_reward_q = np.zeros(k)
 
-    def _get_erasure_bit(self, agent_idx: int) -> int:
-        if self.erasure_seq is not None:
-            bit = self.erasure_seq[self.erasure_index[agent_idx], agent_idx]
-            self.erasure_index[agent_idx] += 1
-        else:
-            bit = int(self.rng.random() < self.eps[agent_idx])
-        return bit
-
     def schedule(self, pulls_per_arm: int) -> np.ndarray:
         active_arm_indices = np.where(self.active_arms == 1)[0]
         self.rng.shuffle(active_arm_indices)

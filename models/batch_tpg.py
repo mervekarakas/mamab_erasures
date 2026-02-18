@@ -44,25 +44,6 @@ class BatchTPG(BanditBase):
         self.arm_counts = np.zeros(k, dtype=int)
         self.arm_sums = np.zeros(k)
 
-    def _get_erasure_bit(self, m_idx: int) -> int:
-        """
-        Return the next erasure bit from the predetermined sequence if available;
-        otherwise, sample from Bernoulli(eps[m_idx]).
-        """
-        if self.erasure_seq is not None:
-            bit = self.erasure_seq[self.erasure_index[m_idx], m_idx]
-            self.erasure_index[m_idx] += 1
-        else:
-            bit = int(self.rng.random() < self.eps[m_idx])
-
-        self.tx_count_total += 1
-        self.tx_count_per_agent[m_idx] += 1
-
-        self.update_feedback_counts(m_idx, bit)
-
-        return bit
-
-
     def run(self):
         """
         Main TPG loop over batches. Each batch i:

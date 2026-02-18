@@ -46,25 +46,6 @@ class BatchSGreedy(BanditBase):
 
 
 
-    def _get_erasure_bit(self, agent_idx: int) -> int:
-        """
-        Return the next erasure bit for agent_idx from the predetermined sequence if available;
-        otherwise, fall back on a random draw from epsilon.
-        """
-        if self.erasure_seq is not None:
-            bit = self.erasure_seq[self.erasure_index[agent_idx], agent_idx]
-            self.erasure_index[agent_idx] += 1
-        else:
-            bit = int(self.rng.random() < self.eps[agent_idx])
-
-        self.tx_count_total += 1
-        self.tx_count_per_agent[agent_idx] += 1
-
-        self.update_feedback_counts(agent_idx, bit)
-
-        return bit
-
-
     def run(self):
         """
         Main execution loop. Proceeds in batches, each requiring 4^i effective pulls for active arms.
