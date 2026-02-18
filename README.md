@@ -1,4 +1,4 @@
-# Multi-Agent Bandit Learning through Heterogeneous Action Erasure Channels
+# Fundamental Limits of Learning Under Erasure-Constrained Communication Channels
 
 Simulation code for multi-agent multi-armed bandits (MABs) where a central
 controller communicates arm selections to distributed agents over independent
@@ -6,27 +6,30 @@ erasure channels with heterogeneous erasure probabilities.
 
 ## Papers
 
-- **JSAIT 2026**: "Multi-Agent Bandit Learning through Heterogeneous Action Erasure Channels"
-  (journal version with feedback modes, Two-Phase Greedy, energy analysis)
-- **AISTATS 2024**: "Stochastic Bandits with Heterogeneous Action Erasure Probabilities"
-  (conference version with scheduled batch elimination baselines)
+This repository accompanies the following papers:
+
+- **[1]** Journal paper (under submission) — extends [2] with erasure feedback
+  modes, Two-Phase Greedy scheduling, and communication energy analysis.
+- **[2]** Multi-agent MAB over heterogeneous erasure channels (AISTATS 2024).
+- **[3]** Single-agent MAB with erasure feedback (ISIT 2025).
+- **[4]** Single-agent MAB over erasure channels — prior work (ISIT 2023).
 
 ## Algorithms
 
-### JSAIT 2026
+### Journal [1]
 
 | Class | Description |
 |---|---|
-| `BatchSP2` | Offline scheduled batch pulls, no feedback (AISTATS baseline) |
+| `BatchSP2` | Offline scheduled batch pulls, no feedback (baseline from [2]) |
 | `BatchSP2Erasure` | SP2 with erasure feedback and stack-based delivery ("SP2-Feedback") |
-| `BatchTPG` | Two-Phase Greedy — main JSAIT algorithm |
+| `BatchTPG` | Two-Phase Greedy — main algorithm |
 | `BatchTPGNew` | TPG variant protecting already-delivered arms from takeover |
 | `BatchTPGOld` | Earlier TPG with forcible agent unassignment |
 | `BatchSP2RRR` | Random round-robin scheduling baseline |
 | `BatchSGreedy` | Greedy per-round arm selection baseline |
 | `BatchSP2Simplified` | Pointer-based simplified TPG implementation |
 
-### AISTATS 2024 (Legacy)
+### AISTATS [2] (Legacy)
 
 | Class | Description |
 |---|---|
@@ -66,14 +69,14 @@ results = run_episodes_with_same_erasures(
 
 ## Reproducing Paper Results
 
-### K=10 experiments (JSAIT main text)
+### K=10 experiments (journal main text)
 ```bash
 python experiments/run_k10_mild.py
 python experiments/run_k10_bernoulli.py
 python experiments/run_k10_movielens.py
 ```
 
-### K=100 experiments (JSAIT supplement)
+### K=100 experiments (journal supplement)
 ```bash
 python experiments/run_k100_single.py 4 nominal
 python experiments/run_k100_single.py 20 nominal
@@ -109,3 +112,22 @@ results/          Output directory for .pkl results and figures (gitignored)
 - NumPy
 - Matplotlib
 - Pandas
+
+## References
+
+**[1]** M. Karakas, O. A. Hanna, L. F. Yang, and C. Fragouli, "Fundamental Limits of
+Learning Under Erasure-Constrained Communication Channels," under submission.
+
+**[2]** O. A. Hanna\*, M. Karakas\*, L. Yang, and C. Fragouli, "Multi-Agent Bandit Learning
+through Heterogeneous Action Erasure Channels," in *Proc. AISTATS*, 2024.
+[proceedings](https://proceedings.mlr.press/v238/hanna24a.html)
+
+**[3]** M. Karakas, O. Hanna, L. F. Yang, and C. Fragouli, "Does Feedback Help in
+Bandits with Arm Erasures?," in *Proc. IEEE ISIT*, Ann Arbor, MI, 2025.
+[IEEE](https://ieeexplore.ieee.org/document/11195223)
+
+**[4]** O. A. Hanna\*, M. Karakas\*, L. F. Yang, and C. Fragouli, "Multi-Arm Bandits over
+Action Erasure Channels," in *Proc. IEEE ISIT*, Taipei, Taiwan, 2023.
+[IEEE](https://ieeexplore.ieee.org/abstract/document/10206591)
+
+\* Equal contribution.
