@@ -272,3 +272,25 @@ class BanditBase(CommMixin):
             self.mu = self._init_mu(mu)
 
         self.reset_comm_counters()
+
+    def eliminate_arms(self, pulls_per_arm: int) -> None:
+        """Eliminate arms whose empirical mean is significantly below the best."""
+        survivors = np.where(self.active_arms == 1)[0]
+        if len(survivors) == 0:
+            return
+        best_mean = np.max(self.k_reward_q[survivors])
+        threshold = C_CONFIDENCE * self.c * math.sqrt(
+            math.log(self.iters * self.m) / (2.0 * pulls_per_arm))
+        for a in survivors:
+            if best_mean - self.k_reward_q[a] > threshold:
+                self.active_arms[a] = 0
+
+    def all_arms_done(self, pull_counts, needed: int) -> bool:
+        """Return True if every active arm has at least *needed* pulls."""
+        active_inds = np.where(self.active_arms == 1)[0]
+        if len(active_inds) == 0:
+            return True
+        for a in active_inds:
+            if pull_counts[a] < needed:
+                return False
+        return True

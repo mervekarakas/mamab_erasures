@@ -9,7 +9,7 @@ from typing import Optional, Sequence, Union
 import numpy as np
 from numpy.random import Generator
 
-from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
+from models.base import BanditBase, FEEDBACK_BEACON
 
 
 class BatchTPGOld(BanditBase):
@@ -345,22 +345,13 @@ class BatchTPGOld(BanditBase):
                     self.arm_counts[a]+=pull_count[a]
                     self.k_reward_q[a]=self.arm_sums[a]/float(self.arm_counts[a])
 
-            # partial elimination
-            survivors=np.where(self.active_arms==1)[0]
-            if len(survivors)==0:
-                break
-            best_mean=np.max(self.k_reward_q[survivors])
-            for a in survivors:
-                diff=best_mean-self.k_reward_q[a]
-                threshold = C_CONFIDENCE*self.c*np.sqrt(np.log(self.iters*self.m)/(2.0*M_i))
-                if diff>threshold:
-                    self.active_arms[a]=0
+            self.eliminate_arms(M_i)
 
-                if self.verbose:
-                    self.logger.debug('end_time=%s pull_cnt=%s survivors=%s',
-                                      t,
-                                      {a: actual_pull_count[a] for a in active_arm_inds},
-                                      np.where(self.active_arms==1)[0])
+            if self.verbose:
+                self.logger.debug('end_time=%s pull_cnt=%s survivors=%s',
+                                  t,
+                                  {a: actual_pull_count[a] for a in active_arm_inds},
+                                  np.where(self.active_arms==1)[0])
 
     def reset(self, mu=None, base_actions=None, erasure_seq=None):
         """

@@ -9,7 +9,7 @@ from typing import Optional, Sequence, Union
 import numpy as np
 from numpy.random import Generator
 
-from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
+from models.base import BanditBase, FEEDBACK_BEACON
 
 
 class BatchSGreedy(BanditBase):
@@ -172,18 +172,7 @@ class BatchSGreedy(BanditBase):
                     self.arm_counts[arm] += cnt
                     self.k_reward_q[arm]  = self.arm_sums[arm] / float(self.arm_counts[arm])
 
-            # 8) Elimination Step
-            #    If an arm is far enough below the best observed mean, we eliminate it.
-            survivors = np.where(self.active_arms == 1)[0]
-            if len(survivors) == 0:
-                break
-            best_mean = np.max(self.k_reward_q[survivors])
-            # Confidence threshold
-            thresh = C_CONFIDENCE * self.c * math.sqrt(np.log(self.iters*self.m) / (2.0*M_i))
-            for arm in survivors:
-                diff = best_mean - self.k_reward_q[arm]
-                if diff > thresh:
-                    self.active_arms[arm] = 0
+            self.eliminate_arms(M_i)
             if self.verbose:
                 self.logger.debug('end_time=%s pull counts=%s survivors=%s', t, actual_pull_count, np.where(self.active_arms == 1)[0])
             # End of one batch
@@ -197,18 +186,3 @@ class BatchSGreedy(BanditBase):
         self.k_reward_q = np.zeros(self.k)
         self.arm_counts = np.zeros(self.k, dtype=int)
         self.arm_sums   = np.zeros(self.k)
-
-
-    def _all_arms_done(self, pull_counts, needed):
-        """
-        Check if all active arms have at least 'needed' successful pulls.
-        If yes, we can terminate early.
-        (If you want partial usage of this method, just replicate from other classes.)
-        """
-        active_inds = np.where(self.active_arms == 1)[0]
-        if len(active_inds) == 0:
-            return True
-        for a in active_inds:
-            if pull_counts[a] < needed:
-                return False
-        return True

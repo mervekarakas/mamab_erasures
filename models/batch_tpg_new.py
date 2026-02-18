@@ -10,7 +10,7 @@ import numpy as np
 from numpy.random import Generator
 
 from models.batch_tpg import BatchTPG
-from models.base import C_CONFIDENCE, FEEDBACK_BEACON
+from models.base import FEEDBACK_BEACON
 
 
 class BatchTPGNew(BatchTPG):
@@ -376,12 +376,4 @@ class BatchTPGNew(BatchTPG):
                     self.arm_counts[a] += pull_count[a]
                     self.k_reward_q[a] = self.arm_sums[a] / float(self.arm_counts[a])
 
-            survivors = np.where(self.active_arms == 1)[0]
-            if len(survivors) == 0:
-                break
-            best_mean = np.max(self.k_reward_q[survivors])
-            for a in survivors:
-                diff = best_mean - self.k_reward_q[a]
-                threshold = C_CONFIDENCE * self.c * np.sqrt(np.log(self.iters * self.m) / (2.0 * M_i))
-                if diff > threshold:
-                    self.active_arms[a] = 0
+            self.eliminate_arms(M_i)

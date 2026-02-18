@@ -11,7 +11,7 @@ from typing import Optional, Sequence, Union
 import numpy as np
 from numpy.random import Generator
 
-from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
+from models.base import BanditBase, FEEDBACK_BEACON
 
 
 class BatchSP2Simplified(BanditBase):
@@ -340,16 +340,7 @@ class BatchSP2Simplified(BanditBase):
                     self.arm_counts[a] += local_cnt
                     self.k_reward_q[a] = self.arm_sums[a] / float(self.arm_counts[a])
 
-            # Elimination
-            survivors = np.where(self.active_arms == 1)[0]
-            if len(survivors) == 0:
-                break
-            best_mean = np.max(self.k_reward_q[survivors])
-            for a in survivors:
-                diff = best_mean - self.k_reward_q[a]
-                threshold = C_CONFIDENCE * self.c * math.sqrt(np.log(self.iters*self.m)/(2.0*M_i))
-                if diff > threshold:
-                    self.active_arms[a] = 0
+            self.eliminate_arms(M_i)
 
 
     def reset(self, mu=None, base_actions=None, erasure_seq=None):

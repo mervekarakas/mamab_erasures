@@ -10,7 +10,7 @@ from typing import Optional, Sequence, Union
 import numpy as np
 from numpy.random import Generator
 
-from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
+from models.base import BanditBase, FEEDBACK_BEACON
 
 
 class BatchSP2Erasure(BanditBase):
@@ -145,7 +145,7 @@ class BatchSP2Erasure(BanditBase):
             noise_vec = np.empty(self.m)
             proposed_arms = np.empty(self.m, dtype=int)
 
-            while not self._all_arms_done(pull_counts, M_i):
+            while not self.all_arms_done(pull_counts, M_i):
                 if t >= self.iters:
                     return
 
@@ -237,10 +237,7 @@ class BatchSP2Erasure(BanditBase):
                 self.k_reward_q[a] = (self.k_reward_q[a]*num_pulls+reward_sums[a])/(num_pulls+pull_counts[a])
             num_pulls += M_i
 
-            for j in active_arm_inds:
-                diff = np.max(self.k_reward_q[active_arm_inds]) - self.k_reward_q[j]
-                if diff > C_CONFIDENCE * self.c * float(np.sqrt(np.log(self.iters * self.m) / (2 * M_i))):
-                    self.active_arms[j] = 0
+            self.eliminate_arms(M_i)
 
 
     def _decrement_chunk(self, m, arm_played):
@@ -289,20 +286,6 @@ class BatchSP2Erasure(BanditBase):
                 if a2 != arm:
                     new_list.append([a2, c2])
             self.assignments[m] = deque(new_list) if isinstance(self.assignments[m], deque) else new_list
-
-    def _all_arms_done(self, pull_counts, needed):
-        """
-        Check if all active arms have at least 'needed' successful pulls.
-        If yes, we can terminate early.
-        """
-        active_inds = np.where(self.active_arms == 1)[0]
-        if len(active_inds) == 0:
-            return True
-        # if every arm in active_inds has effective_pulls >= needed, done
-        for a in active_inds:
-            if pull_counts[a] < needed:
-                return False
-        return True
 
     def reset(self, mu=None, base_actions=None, erasure_seq=None):
         """

@@ -12,7 +12,7 @@ from typing import Optional, Sequence, Union
 import numpy as np
 from numpy.random import Generator
 
-from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_NONE
+from models.base import BanditBase, FEEDBACK_NONE
 
 
 class BatchSP2(BanditBase):
@@ -196,10 +196,7 @@ class BatchSP2(BanditBase):
                 self.k_reward_q[arm_idx] = (self.k_reward_q[arm_idx] * num_pulls + reward_sums[arm_idx]) / (num_pulls + pull_counts[arm_idx])
             num_pulls += pulls_per_arm
 
-            for arm_idx in active_arm_indices:
-                diff = np.max(self.k_reward_q[active_arm_indices]) - self.k_reward_q[arm_idx]
-                if diff > C_CONFIDENCE * self.c * float(np.sqrt(np.log(self.iters * self.m) / (2 * pulls_per_arm))):
-                    self.active_arms[arm_idx] = 0
+            self.eliminate_arms(pulls_per_arm)
 
     def reset(self, mu=None, base_actions=None, erasure_seq=None) -> None:
         self.reset_base(mu=mu, base_actions=base_actions, erasure_seq=erasure_seq)

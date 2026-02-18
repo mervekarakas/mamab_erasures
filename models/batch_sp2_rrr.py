@@ -9,7 +9,7 @@ from typing import Optional, Sequence, Union
 import numpy as np
 from numpy.random import Generator
 
-from models.base import BanditBase, C_CONFIDENCE, FEEDBACK_BEACON
+from models.base import BanditBase, FEEDBACK_BEACON
 
 
 class BatchSP2RRR(BanditBase):
@@ -74,7 +74,7 @@ class BatchSP2RRR(BanditBase):
 
             arms_with_remaining_pulls = set(active_arm_inds)
             actual_pull_count = {i: 0 for i in arms_with_remaining_pulls}
-            while not self._all_arms_done(pull_counts, M_i):
+            while not self.all_arms_done(pull_counts, M_i):
                 if t >= self.iters:
                     return
 
@@ -144,27 +144,10 @@ class BatchSP2RRR(BanditBase):
                 self.k_reward_q[a] = (self.k_reward_q[a]*num_pulls+reward_sums[a])/(num_pulls+pull_counts[a])
             num_pulls += M_i
 
-            for j in active_arm_inds:
-                diff = np.max(self.k_reward_q[active_arm_inds]) - self.k_reward_q[j]
-                if diff > C_CONFIDENCE * self.c * float(np.sqrt(np.log(self.iters * self.m) / (2 * M_i))):
-                    self.active_arms[j] = 0
+            self.eliminate_arms(M_i)
             if self.verbose:
                 self.logger.debug('end_time=%s pull counts=%s survivors=%s', t, actual_pull_count, np.where(self.active_arms == 1)[0])
 
-
-    def _all_arms_done(self, pull_counts, needed):
-        """
-        Check if all active arms have at least 'needed' successful pulls.
-        If yes, we can terminate early.
-        """
-        active_inds = np.where(self.active_arms == 1)[0]
-        if len(active_inds) == 0:
-            return True
-        # if every arm in active_inds has effective_pulls >= needed, done
-        for a in active_inds:
-            if pull_counts[a] < needed:
-                return False
-        return True
 
     def reset(self, mu=None, base_actions=None, erasure_seq=None):
         """
