@@ -64,9 +64,9 @@ class BatchTPGOld(BanditBase):
                 break
 
             # local counters
-            pull_count = {a: 0 for a in active_arm_inds}
-            pull_sums = {a: 0.0 for a in active_arm_inds}
-            actual_pull_count = {a: 0 for a in active_arm_inds}  # debugging
+            pull_count = np.zeros(self.k, dtype=int)
+            pull_sums = np.zeros(self.k)
+            actual_pull_count = np.zeros(self.k, dtype=int)  # debugging
 
             # ======== PHASE 1: GREEDY TAKEOVER =============
             done_arms = set()  # arms that already reached M_i
