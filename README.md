@@ -1,18 +1,43 @@
-# Fundamental Limits of Learning Under Erasure-Constrained Communication Channels
+# Bandit Learning under Communication Constraints
 
-Simulation code for multi-agent multi-armed bandits (MABs) where a central
-controller communicates arm selections to distributed agents over independent
-erasure channels with heterogeneous erasure probabilities.
+In many distributed learning systems — wireless networks, medical microrobotics,
+autonomous fleets — a central learner must coordinate remote agents over unreliable
+communication links. When an arm command is lost (erased), the agent replays its
+last successfully received action, but the learner still observes the resulting
+reward. This creates a fundamental challenge: the learner cannot tell whether the
+observed reward came from the intended arm or a stale one.
+
+This repository provides simulation code for multi-armed bandit (MAB) algorithms
+designed for this erasure-channel setting, covering both single- and multi-agent
+scenarios with and without erasure feedback.
+
+<p align="center">
+  <img src="figures/system_model.png" width="400"/>
+</p>
+<p align="center">
+  <em>System model: a learner communicates arm selections to M agents over
+  independent erasure channels with heterogeneous erasure probabilities
+  ε_m ∈ [0, 1). An optional feedback channel indicates whether each
+  transmission was received.</em>
+</p>
 
 ## Papers
 
 This repository accompanies the following papers:
 
-- **[1]** Journal paper (under submission) — extends [2] with erasure feedback
-  modes, Two-Phase Greedy scheduling, and communication energy analysis.
-- **[2]** Multi-agent MAB over heterogeneous erasure channels (AISTATS 2024).
-- **[3]** Single-agent MAB with erasure feedback (ISIT 2025).
-- **[4]** Single-agent MAB over erasure channels — prior work (ISIT 2023).
+- Fundamental Limits of Learning Under Erasure-Constrained Communication Channels **[1]** —
+  unified treatment of single- and multi-agent bandits over erasure channels.
+  Proves that erasure feedback does not improve asymptotic regret, and introduces
+  Two-Phase Greedy (TPG) scheduling with communication energy analysis.
+- Multi-Agent Bandit Learning through Heterogeneous Action Erasure Channels **[2]** —
+  first algorithms with sub-linear regret for multi-agent MAB over heterogeneous
+  erasure channels, using repetition-based scheduling.
+- Does Feedback Help in Bandits with Arm Erasures? **[3]** —
+  proves a regret lower bound of Omega(sqrt(KT) + K/(1-eps)) for the single-agent
+  setting with feedback, matching the no-feedback case.
+- Multi-Arm Bandits over Action Erasure Channels **[4]** —
+  single-agent MAB over erasure channels with a universal wrapper scheme
+  and modified successive arm elimination with matching upper and lower bounds.
 
 ## Algorithms
 
