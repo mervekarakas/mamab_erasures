@@ -1,0 +1,9 @@
+results/
+*.pkl
+*.pickle
+__pycache__/
+.DS_Store
+.ipynb_checkpoints/
+# Old Experiments/ directory (capital E) from legacy code
+# Not ignored: lowercase experiments/ is our active directory
+*.pyc
