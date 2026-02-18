@@ -276,6 +276,7 @@ class BatchTPGOld(BanditBase):
                                 if not chunk_done(*cand):
                                     assigned_chunk[mm]=cand
                                     (ra,rcid)=cand
+                                    newly_assigned=True
                                     break
                             # fallback => if still no chunk, swap with best pointer
                             if not newly_assigned:

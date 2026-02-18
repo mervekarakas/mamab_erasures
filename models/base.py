@@ -45,6 +45,8 @@ def calculate_repetitions(eps: Union[float, int, Sequence[float]], iters: int, m
     eps_arr = np.array(eps, dtype=float)
     alphas = np.ones(len(eps_arr))
     for i, eps_val in enumerate(eps_arr):
+        if eps_val >= 1.0:
+            raise ValueError(f"Erasure probability eps[{i}]={eps_val} must be < 1.0")
         if eps_val > 0:
             alphas[i] = np.ceil(2 * np.log(iters) / np.log(1 / eps_val))
     return alphas.astype(int)

@@ -256,6 +256,7 @@ class BatchSP2Simplified(BanditBase):
                             if not chunk_is_done(*candidate):
                                 assigned_arm[m_idx] = candidate
                                 (ra, rcid) = candidate
+                                newly_assigned = True
                                 break
                         if not newly_assigned:
                             if m_idx < pt:
@@ -309,14 +310,9 @@ class BatchSP2Simplified(BanditBase):
                         elif replicate_count[(ra, rcid)] >= needed_per_chunk: # or check if chunk is done
                             # free agent
                             replicate_active[(ra, rcid)] = False
-                    elif actual_arm in unfinished_arms_lst:
+                    elif actual_arm in unfinished_arms_lst and pull_count[actual_arm] < M_i:
                         pull_count[actual_arm] += 1
                         pull_sums[actual_arm] += r_val
-
-                        # check if arm ra is done overall
-                        #if pull_count[actual_arm] >= M_i:
-                            # remove all copies
-                        #    remove_all_copies_of_arm(actual_arm)
 
                 # Logging each round
                 self.rewards[t, :] = reward_vec
