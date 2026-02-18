@@ -13,10 +13,8 @@ import pickle, time, copy
 
 os.environ['RUN_MAB_PARALLEL'] = '0'
 
-from helper_methods import (
-    init_bandit, generate_erasure_sequence_multi, calculate_repetitions,
-)
-from models import FEEDBACK_ACK_SUCCESS, FEEDBACK_NONE
+from models import init_bandit, calculate_repetitions, FEEDBACK_ACK_SUCCESS, FEEDBACK_NONE
+from utils import generate_erasure_sequence_multi
 
 K = 10
 T = 50_000

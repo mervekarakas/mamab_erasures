@@ -43,7 +43,7 @@ pip install -r requirements.txt
 
 ```python
 from models import BatchTPG, BatchSP2, calculate_repetitions, FEEDBACK_ACK_SUCCESS
-from helper_methods import run_episodes_with_same_erasures
+from runners import run_episodes_with_same_erasures
 import numpy as np
 
 K, M, T = 10, 4, 50000
@@ -93,11 +93,13 @@ python plotting/replot_k100.py      # K=100 supplement figures
 ## Directory Structure
 
 ```
-models/           Algorithm implementations (one class per file)
+models/           Algorithm implementations (one class per file) + init_bandit factory
 experiments/      Experiment runner scripts
-plotting/         Replot scripts for generating paper figures
+plotting/         Replot scripts for generating paper figures + utils.py
 notebooks/        Jupyter notebooks (smoke test, legacy, paper experiments)
-helper_methods.py Shared utilities (erasure generation, episode runner, plotting)
+utils.py          Erasure sequence generation functions
+runners.py        Episode runners (run_episodes, run_episodes_with_same_erasures)
+helper_methods.py Backward-compat shim (re-exports from utils, runners, models, plotting)
 results/          Output directory for .pkl results and figures (gitignored)
 ```
 

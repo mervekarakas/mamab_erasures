@@ -18,7 +18,7 @@ import pickle, time
 
 os.environ['RUN_MAB_PARALLEL'] = '0'
 
-from helper_methods import run_episodes_with_same_erasures
+from runners import run_episodes_with_same_erasures
 from models import FEEDBACK_ACK_SUCCESS, FEEDBACK_NONE
 
 # ── Config ──

@@ -25,7 +25,7 @@ class BatchSP2Simplified(BanditBase):
     def __init__(self, k, m, iters, alphas, var=1, c=1, mu='random', epsilon=0, base=None, erasure_seq=None,
                  feedback_mode=FEEDBACK_BEACON, rng: Optional[Generator] = None, verbose: bool = False):
         super().__init__(
-            name='TPG',
+            name='TPG-Simplified',
             k=k,
             m=m,
             iters=iters,
